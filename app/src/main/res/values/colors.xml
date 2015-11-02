@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="month_saturday">#80333333</color>
+    <color name="month_sunday">#80333333</color>
+
+    <color name="month_day_names_color">#FF999999</color>
+    <color name="month_mini_day_number">#FF000000</color>
+    <color name="month_grid_lines">#ffCCCCCC</color>
+    <color name="month_other_month_day_number">#ff939497</color>
+
+    <color name="event_center">#ff6bd697</color>
+
+    <color name="month_dna_conflict_time_color">#FF333333</color>
+
+    <color name="month_week_num_color">#FF999999</color>
+    <color name="month_day_number">#FF333333</color>
+    <color name="month_day_number_other">#FF999999</color>
+    <color name="month_today_number">#FF333333</color>
+    <color name="month_event_color">#FF333333</color>
+
+    <color name="agenda_item_declined_color">#66333333</color>
+    <color name="agenda_item_where_declined_text_color">#66666666</color>
+
+    <color name="month_event_extra_color">#FF666666</color>
+    <color name="month_event_other_color">#FF666666</color>
+    <color name="month_event_extra_other_color">#4C999999</color>
+
+    <color name="month_today_bgcolor">#FFFFFFFF</color>
+    <color name="month_bgcolor">#FFE5E5E5</color>
+    <color name="month_other_bgcolor">#FFEEEEEE</color>
+    <color name="month_selected_week_bgcolor">#FFDDDDDD</color>
+
+    <color name="mini_month_today_outline_color">#FF000000</color>
+
+    <color name="calendar_event_text_color">#ffFFFFFF</color>
+
+    <color name="today_highlight_color">#0033b5e5</color>
+
+    <color name="day_clicked_background_color">#FF33B5E5</color>
+
+    <color name="calendar_grid_line_inner_vertical_color">#FFCCCCCC</color>
+</resources>
