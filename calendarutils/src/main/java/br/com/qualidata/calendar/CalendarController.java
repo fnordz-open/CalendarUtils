@@ -283,7 +283,7 @@ public class CalendarController {
 
             if (controller == null) {
                 controller = new CalendarController(context);
-                instances.put(context, new WeakReference(controller));
+                instances.put(context, new WeakReference<>(controller));
             }
             return controller;
         }

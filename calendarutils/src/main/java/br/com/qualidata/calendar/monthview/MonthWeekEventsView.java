@@ -110,7 +110,7 @@ public class MonthWeekEventsView extends SimpleWeekView {
     protected int mTodayIndex = -1;
     protected int mOrientation = Configuration.ORIENTATION_LANDSCAPE;
     protected List<ArrayList<Event>> mEvents = null;
-    protected ArrayList<Event> mUnsortedEvents = null;
+    protected List<Event> mUnsortedEvents = null;
     HashMap<Integer, Utils.DNAStrand> mDna = null;
     // This is for drawing the outlines around event chips and supports up to 10
     // events being drawn on each day. The code will expand this if necessary.
@@ -254,7 +254,7 @@ public class MonthWeekEventsView extends SimpleWeekView {
     // Sets the list of events for this week. Takes a sorted list of arrays
     // divided up by day for generating the large month version and the full
     // arraylist sorted by start time to generate the dna version.
-    public void setEvents(List<ArrayList<Event>> sortedEvents, ArrayList<Event> unsortedEvents) {
+    public void setEvents(List<ArrayList<Event>> sortedEvents, List<Event> unsortedEvents) {
         setEvents(sortedEvents);
         // The MIN_WEEK_WIDTH is a hack to prevent the view from trying to
         // generate dna bits before its width has been fixed.
@@ -266,7 +266,7 @@ public class MonthWeekEventsView extends SimpleWeekView {
      * isn't in a state that will create a valid set of dna yet (such as the
      * views width not being set correctly yet).
      */
-    public void createDna(ArrayList<Event> unsortedEvents) {
+    public void createDna(List<Event> unsortedEvents) {
         if (unsortedEvents == null || mWidth <= MIN_WEEK_WIDTH || getContext() == null) {
             // Stash the list of events for use when this view is ready, or
             // just clear it if a null set has been passed to this view

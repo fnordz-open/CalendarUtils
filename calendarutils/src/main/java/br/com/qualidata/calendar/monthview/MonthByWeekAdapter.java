@@ -31,6 +31,7 @@ import android.widget.AbsListView.LayoutParams;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import br.com.qualidata.calendar.R;
 import br.com.qualidata.calendar.CalendarController;
@@ -57,7 +58,7 @@ public class MonthByWeekAdapter extends SimpleWeeksAdapter {
     private final boolean mShowAgendaWithMonth;
 
     protected ArrayList<ArrayList<Event>> mEventDayList = new ArrayList<ArrayList<Event>>();
-    protected ArrayList<Event> mEvents = null;
+    protected List<Event> mEvents = null;
 
     private boolean mAnimateToday = false;
     private long mAnimateTime = 0;
@@ -123,7 +124,7 @@ public class MonthByWeekAdapter extends SimpleWeeksAdapter {
         notifyDataSetChanged();
     }
 
-    public void setEvents(int firstJulianDay, int numDays, ArrayList<Event> events) {
+    public void setEvents(int firstJulianDay, int numDays, List<Event> events) {
         if (mIsMiniMonth) {
             if (Log.isLoggable(TAG, Log.ERROR)) {
                 Log.e(TAG, "Attempted to set events for mini view. Events only supported in full"

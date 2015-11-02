@@ -889,7 +889,7 @@ public class Utils {
      * @return
      */
     public static HashMap<Integer, DNAStrand> createDNAStrands(int firstJulianDay,
-            ArrayList<Event> events, int top, int bottom, int minPixels, int[] dayXs,
+            List<Event> events, int top, int bottom, int minPixels, int[] dayXs,
             Context context) {
 
         if (!mMinutesLoaded) {
