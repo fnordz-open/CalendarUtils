@@ -3,15 +3,7 @@
 
     <uses-permission android:name="android.permission.READ_CALENDAR" />
     <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
-    <application android:allowBackup="true">
-        <activity android:name="br.com.qualidata.calendar.TestFragmentActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-    </application>
+    <application android:allowBackup="true"/>
 
 </manifest>

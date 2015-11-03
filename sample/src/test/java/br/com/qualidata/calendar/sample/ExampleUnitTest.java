@@ -1,4 +1,4 @@
-package br.com.qualidata.calendar;
+package br.com.qualidata.calendar.sample;
 
 import org.junit.Test;
 

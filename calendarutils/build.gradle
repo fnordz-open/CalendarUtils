@@ -1,17 +1,12 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 23
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "br.com.qualidata.monthview"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -22,19 +17,6 @@ android {
 }
 
 dependencies {
-    //Internal modules
     compile project(':datetimepicker')
     compile project(':timezonepicker')
-
-    //Google Play
-    compile 'com.google.android.gms:play-services-base:8.1.0'
-
-    //Tests
-    testCompile 'junit:junit:4.12'
-    androidTestCompile ('com.android.support.test:runner:0.4') {
-        exclude module: 'support-annotations'
-    }
-    androidTestCompile ('com.android.support.test:rules:0.4') {
-        exclude module: 'support-annotations'
-    }
 }
