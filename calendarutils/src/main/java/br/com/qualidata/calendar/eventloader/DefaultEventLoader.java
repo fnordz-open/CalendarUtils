@@ -1,4 +1,4 @@
-package br.com.qualidata.calendar;
+package br.com.qualidata.calendar.eventloader;
 
 import android.app.Activity;
 import android.content.ContentUris;
@@ -15,6 +15,9 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import br.com.qualidata.calendar.model.Event;
+import br.com.qualidata.calendar.Utils;
 
 /**
  * Created by Ricardo on 02/11/2015.

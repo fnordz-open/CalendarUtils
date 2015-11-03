@@ -1,4 +1,4 @@
-package br.com.qualidata.calendar;
+package br.com.qualidata.calendar.eventloader;
 
 import android.app.Activity;
 import android.app.LoaderManager;
@@ -12,6 +12,8 @@ import android.util.Log;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.WeakHashMap;
+
+import br.com.qualidata.calendar.model.Event;
 
 /**
  * Created by Ricardo on 02/11/2015.

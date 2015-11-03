@@ -35,7 +35,7 @@ import java.util.List;
 
 import br.com.qualidata.calendar.R;
 import br.com.qualidata.calendar.CalendarController;
-import br.com.qualidata.calendar.Event;
+import br.com.qualidata.calendar.model.Event;
 import br.com.qualidata.calendar.Utils;
 
 import static br.com.qualidata.calendar.CalendarController.*;

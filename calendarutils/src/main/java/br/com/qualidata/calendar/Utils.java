@@ -63,6 +63,8 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import br.com.qualidata.calendar.model.Event;
+
 import static android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME;
 import static br.com.qualidata.calendar.CalendarUtils.*;
 

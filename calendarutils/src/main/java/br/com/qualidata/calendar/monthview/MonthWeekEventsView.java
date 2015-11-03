@@ -50,7 +50,7 @@ import java.util.List;
 import java.util.Locale;
 
 import br.com.qualidata.calendar.R;
-import br.com.qualidata.calendar.Event;
+import br.com.qualidata.calendar.model.Event;
 import br.com.qualidata.calendar.Utils;
 
 public class MonthWeekEventsView extends SimpleWeekView {

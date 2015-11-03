@@ -41,9 +41,9 @@ import br.com.qualidata.calendar.CalendarController;
 import br.com.qualidata.calendar.CalendarController.EventInfo;
 import br.com.qualidata.calendar.CalendarController.EventType;
 import br.com.qualidata.calendar.CalendarController.ViewType;
-import br.com.qualidata.calendar.DefaultEventLoader;
-import br.com.qualidata.calendar.Event;
-import br.com.qualidata.calendar.EventLoader;
+import br.com.qualidata.calendar.eventloader.DefaultEventLoader;
+import br.com.qualidata.calendar.model.Event;
+import br.com.qualidata.calendar.eventloader.EventLoader;
 import br.com.qualidata.calendar.R;
 import br.com.qualidata.calendar.Utils;
 

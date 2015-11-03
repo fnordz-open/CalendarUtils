@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package br.com.qualidata.calendar;
+package br.com.qualidata.calendar.model;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -36,6 +36,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import br.com.qualidata.calendar.GeneralPreferences;
+import br.com.qualidata.calendar.R;
+import br.com.qualidata.calendar.Utils;
 
 // TODO: should Event be Parcelable so it can be passed via Intents?
 public class Event implements Cloneable {
