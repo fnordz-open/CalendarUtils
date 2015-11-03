@@ -6,18 +6,27 @@ import android.test.ApplicationTestCase;
 
 import org.junit.Test;
 
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+
 import br.com.qualidata.calendar.db.CalendarDb;
+import br.com.qualidata.calendar.model.Calendar;
 
 /**
  * Created by Ricardo on 02/11/2015.
  */
 public class CalendarDbTest extends ApplicationTestCase<Application> {
 
+    protected static final String UNIQUE_SYNC_ID = "my_unique_sync_id";
+    protected static final String DEFAULT_CALENDAR_NAME = "Testing Calendar";
+    protected static final String DEFAULT_CALENDAR_ACCOUNT_NAME = "test@gmail.com";
+
+    private static long insertedCalendarId;
+
     public CalendarDbTest() {
         super(Application.class);
     }
-
-    private static long insertedCalendarId;
 
     @Override
     protected void setUp() throws Exception {
@@ -29,36 +38,55 @@ public class CalendarDbTest extends ApplicationTestCase<Application> {
     public void testCalendarListing() {
         assertNotNull(getContext());
 
-        Cursor c = CalendarDb.with(getContext()).getCursorForAllCalendars();
-        assertNotNull(c);
-
-        while (c.moveToNext()) {
-            long id = c.getLong(CalendarDb.CALENDAR_PROJECTION_ID);
-            String name = c.getString(CalendarDb.CALENDAR_PROJECTION_NAME);
-            String displayName = c.getString(CalendarDb.CALENDAR_PROJECTION_DISPLAY_NAME);
-            int color = c.getInt(CalendarDb.CALENDAR_PROJECTION_COLOR);
-            String accountName = c.getString(CalendarDb.CALENDAR_PROJECTION_ACCOUNT_NAME);
-            String accountType = c.getString(CalendarDb.CALENDAR_PROJECTION_ACCOUNT_TYPE);
-            String ownerAccount = c.getString(CalendarDb.CALENDAR_PROJECTION_OWNER_ACCOUNT);
-            int isPrimary = c.getInt(CalendarDb.CALENDAR_PROJECTION_IS_PRIMARY);
-            int isVisible = c.getInt(CalendarDb.CALENDAR_PROJECTION_VISIBLE);
-            int isSync = c.getInt(CalendarDb.CALENDAR_PROJECTION_SYNC_EVENTS);
-        }
+        List<Calendar> calendars = CalendarDb.with(getContext()).getAllCalendars();
+        assertNotNull(calendars);
+        assertTrue(calendars.size() > 0);
     }
 
     public void testCreateCalendar() {
         long id = -1;
+        Calendar calendar;
         try {
-            id = CalendarDb.with(getContext()).createLocalCalendar("Test Calendar 2", "test@gmail.com");
+            calendar = CalendarDb.with(getContext()).createLocalCalendar(DEFAULT_CALENDAR_NAME, DEFAULT_CALENDAR_ACCOUNT_NAME, UNIQUE_SYNC_ID);
+            assertNotNull(calendar);
+            id = calendar.getId();
         } catch (SecurityException e) {
         }
         insertedCalendarId = id;
         assertTrue(insertedCalendarId > 0);
     }
 
+    public void testCreatedCalendarExists() {
+        boolean exists = CalendarDb.with(getContext()).hasCalendarForId(insertedCalendarId);
+        assertTrue(exists);
+
+        exists = CalendarDb.with(getContext()).hasCalendarForId(UNIQUE_SYNC_ID);
+        assertTrue(exists);
+    }
+
+    public void testCalendarNotExists() {
+        boolean exists = CalendarDb.with(getContext()).hasCalendarForId(Long.MAX_VALUE);
+        assertFalse(exists);
+
+        exists = CalendarDb.with(getContext()).hasCalendarForId(-1);
+        assertFalse(exists);
+
+        exists = CalendarDb.with(getContext()).hasCalendarForId(Long.MIN_VALUE);
+        assertFalse(exists);
+
+        exists = CalendarDb.with(getContext()).hasCalendarForId("some_non_existing_key");
+        assertFalse(exists);
+
+        exists = CalendarDb.with(getContext()).hasCalendarForId("");
+        assertFalse(exists);
+    }
+
     public void testDeleteCreatedCalendar() {
         assertTrue(insertedCalendarId > 0);
-        boolean deleted = CalendarDb.with(getContext()).deleteCalendar(insertedCalendarId, "test@gmail.com");
+        boolean deleted = CalendarDb.with(getContext()).deleteCalendar(insertedCalendarId, DEFAULT_CALENDAR_ACCOUNT_NAME);
         assertTrue(deleted);
+
+        assertFalse(CalendarDb.with(getContext()).deleteCalendar(UNIQUE_SYNC_ID, DEFAULT_CALENDAR_ACCOUNT_NAME));
     }
+
 }
