@@ -1,10 +1,7 @@
 package br.com.qualidata.calendar.sample;
 
 import android.app.Application;
-import android.content.ContentUris;
 import android.database.Cursor;
-import android.net.Uri;
-import android.provider.CalendarContract;
 import android.test.ApplicationTestCase;
 
 import org.junit.Test;
@@ -12,7 +9,6 @@ import org.junit.Test;
 import br.com.qualidata.calendar.db.CalendarDb;
 
 /**
- *
  * Created by Ricardo on 02/11/2015.
  */
 public class CalendarDbTest extends ApplicationTestCase<Application> {
@@ -20,6 +16,8 @@ public class CalendarDbTest extends ApplicationTestCase<Application> {
     public CalendarDbTest() {
         super(Application.class);
     }
+
+    private static long insertedCalendarId;
 
     @Override
     protected void setUp() throws Exception {
@@ -51,17 +49,16 @@ public class CalendarDbTest extends ApplicationTestCase<Application> {
     public void testCreateCalendar() {
         long id = -1;
         try {
-            id = CalendarDb.with(getContext()).createLocalCalendar("Test Calendar", "test@gmail.com");
-        } catch (SecurityException e) {}
+            id = CalendarDb.with(getContext()).createLocalCalendar("Test Calendar 2", "test@gmail.com");
+        } catch (SecurityException e) {
+        }
+        insertedCalendarId = id;
+        assertTrue(insertedCalendarId > 0);
+    }
 
-        Uri.Builder builder =
-                CalendarContract.Calendars.CONTENT_URI.buildUpon()
-                .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, "test@gmail.com")
-                .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, CalendarContract.ACCOUNT_TYPE_LOCAL)
-                .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true");
-
-        assertTrue(id > 0);
-        int deleted = getContext().getContentResolver().delete(ContentUris.withAppendedId(builder.build(), id), null, null);
-        assertTrue(deleted == 1);
+    public void testDeleteCreatedCalendar() {
+        assertTrue(insertedCalendarId > 0);
+        boolean deleted = CalendarDb.with(getContext()).deleteCalendar(insertedCalendarId, "test@gmail.com");
+        assertTrue(deleted);
     }
 }

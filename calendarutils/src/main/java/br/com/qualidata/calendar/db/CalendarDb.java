@@ -50,6 +50,28 @@ public class CalendarDb {
         context = c;
     }
 
+//    public boolean hasCalendarForId(long calendarId) {
+//
+//    }
+
+    public boolean deleteCalendar(long calendarId, @NonNull String accountName) {
+        if (TextUtils.isEmpty(accountName)) {
+            throw new NullPointerException("accountName is null");
+        }
+
+        Uri.Builder builder =
+                CalendarContract.Calendars.CONTENT_URI.buildUpon()
+                        .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_NAME, accountName)
+                        .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, CalendarContract.ACCOUNT_TYPE_LOCAL)
+                        .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true");
+
+        int deleted = context.getContentResolver().delete(ContentUris.withAppendedId(builder.build(), calendarId), null, null);
+        if (deleted > 1) {
+            throw new IllegalStateException("Unexpected number of calendars deleted for id " + calendarId + " and accountName '" + accountName + "': " + deleted);
+        }
+        return deleted == 1;
+    }
+
     @RequiresPermission(allOf = {
             android.Manifest.permission.WRITE_CALENDAR,
             android.Manifest.permission.READ_CALENDAR})
