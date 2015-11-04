@@ -41,6 +41,10 @@ import br.com.qualidata.calendar.GeneralPreferences;
 import br.com.qualidata.calendar.R;
 import br.com.qualidata.calendar.Utils;
 
+/**
+ * Holds information about fetched events from the db.
+ * <p>Use {@link CalendarEventModel} when creating a new event to insert.</p>
+ */
 // TODO: should Event be Parcelable so it can be passed via Intents?
 public class Event implements Cloneable {
 

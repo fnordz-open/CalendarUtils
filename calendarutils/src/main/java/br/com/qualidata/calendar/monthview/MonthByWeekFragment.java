@@ -50,6 +50,11 @@ import br.com.qualidata.calendar.Utils;
 public class MonthByWeekFragment extends SimpleDayPickerFragment implements
         CalendarController.EventHandler, OnScrollListener,
         OnTouchListener, EventLoader.EventLoaderCallback {
+
+    public interface OnMonthChangedCallback {
+        void onMonthChanged(int currentMonth, String currentMonthName);
+    }
+
     private static final String TAG = "MonthFragment";
     private static final String TAG_EVENT_DIALOG = "event_dialog";
 
@@ -74,6 +79,7 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
     private int mEventsLoadingDelay;
     private boolean mShowCalendarControls;
 
+    private OnMonthChangedCallback mOnMonthChangedCallback;
     private EventLoader mEventLoader;
 
     private final Runnable mTZUpdater = new Runnable() {
@@ -103,6 +109,12 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+
+        if (!(activity instanceof OnMonthChangedCallback)) {
+            throw new ClassCastException("activity must implement OnMonthChangedCallback");
+        }
+        mOnMonthChangedCallback = (OnMonthChangedCallback)activity;
+
         mTZUpdater.run();
         if (mAdapter != null) {
             mAdapter.setSelectedDay(mSelectedDay);
@@ -126,6 +138,7 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
 
     @Override
     public void onDetach() {
+        mOnMonthChangedCallback = null;
         mEventLoader.onDetach();
         super.onDetach();
         if (mShowCalendarControls) {
@@ -298,6 +311,10 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
             controller.sendEvent(this, EventType.UPDATE_TITLE, time, time, time, -1,
                     ViewType.CURRENT, DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NO_MONTH_DAY
                             | DateUtils.FORMAT_SHOW_YEAR, null, null);
+        }
+
+        if (mOnMonthChangedCallback != null) {
+            mOnMonthChangedCallback.onMonthChanged(mCurrentMonthDisplayed, mMonthName.getText().toString());
         }
     }
 

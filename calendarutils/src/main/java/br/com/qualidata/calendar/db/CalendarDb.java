@@ -21,7 +21,7 @@ import br.com.qualidata.calendar.model.Calendar;
 /**
  * Created by Ricardo on 02/11/2015.
  */
-public class CalendarDb {
+public class CalendarDb extends DbHandler<Calendar> {
 
     private static final String LOG_TAG = "CalendarDb";
 
@@ -51,12 +51,6 @@ public class CalendarDb {
             CalendarContract.Calendars._SYNC_ID
     };
 
-    public interface OnCalendarCreatedListener {
-        void onCalendarCreated(Calendar calendar, boolean alreadyExisted);
-
-        void onCalendarCreationError(Exception e);
-    }
-
     private static CalendarDb instance;
 
     public static CalendarDb with(Context c) {
@@ -70,17 +64,15 @@ public class CalendarDb {
         return instance;
     }
 
-    private final Context context;
-
-    private CalendarDb(Context c) {
-        context = c;
+    protected CalendarDb(Context c) {
+        super(c);
     }
 
     public void createCalendarIfNotExists(final @Nullable Long knownCalendarId, final @Nullable String knownSyncId,
                                           final @NonNull String calendarName, final @NonNull String accountName,
-                                          @NonNull OnCalendarCreatedListener listener) {
+                                          @NonNull OnCreatedListener<Calendar> listener) {
 
-        final WeakReference<OnCalendarCreatedListener> onCalendarCreatedListenerWeakReference = new WeakReference<>(listener);
+        final WeakReference<OnCreatedListener<Calendar>> onCalendarCreatedListenerWeakReference = new WeakReference<>(listener);
 
         new AsyncTask<Void, Void, Calendar>() {
 
@@ -89,7 +81,7 @@ public class CalendarDb {
 
             @Override
             protected Calendar doInBackground(Void... params) {
-                synchronized (context) {
+                synchronized (getContext()) {
                     if (knownCalendarId != null) {
                         if (hasCalendarForId(knownCalendarId)) {
                             alreadyExisted = true;
@@ -115,12 +107,12 @@ public class CalendarDb {
 
             @Override
             protected void onPostExecute(Calendar calendar) {
-                OnCalendarCreatedListener listener = onCalendarCreatedListenerWeakReference.get();
+                OnCreatedListener<Calendar> listener = onCalendarCreatedListenerWeakReference.get();
                 if (listener != null) {
                     if (exception == null) {
-                        listener.onCalendarCreated(calendar, alreadyExisted);
+                        listener.onCreated(calendar, alreadyExisted);
                     } else {
-                        listener.onCalendarCreationError(exception);
+                        listener.onCreationError(exception);
                     }
                 }
             }
@@ -133,7 +125,7 @@ public class CalendarDb {
             return false;
         }
 
-        Cursor c = context.getContentResolver().query(ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, calendarId),
+        Cursor c = getContext().getContentResolver().query(ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, calendarId),
                 new String[]{CalendarContract.Calendars._ID}, null, null, null);
         boolean exists = false;
         if (c != null) {
@@ -151,7 +143,7 @@ public class CalendarDb {
             return false;
         }
 
-        Cursor c = context.getContentResolver().query(CalendarContract.Calendars.CONTENT_URI,
+        Cursor c = getContext().getContentResolver().query(CalendarContract.Calendars.CONTENT_URI,
                 new String[]{CalendarContract.Calendars._ID}, CalendarContract.Calendars._SYNC_ID + " = ?", new String[]{syncId}, null);
         boolean exists = false;
         if (c != null) {
@@ -175,7 +167,7 @@ public class CalendarDb {
                         .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, CalendarContract.ACCOUNT_TYPE_LOCAL)
                         .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true");
 
-        int deleted = context.getContentResolver().delete(ContentUris.withAppendedId(builder.build(), calendarId), null, null);
+        int deleted = getContext().getContentResolver().delete(ContentUris.withAppendedId(builder.build(), calendarId), null, null);
         if (deleted > 1) {
             throw new IllegalStateException("Unexpected number of calendars deleted for id " + calendarId + " and accountName '" + accountName + "': " + deleted);
         }
@@ -193,7 +185,7 @@ public class CalendarDb {
                         .appendQueryParameter(CalendarContract.Calendars.ACCOUNT_TYPE, CalendarContract.ACCOUNT_TYPE_LOCAL)
                         .appendQueryParameter(CalendarContract.CALLER_IS_SYNCADAPTER, "true");
 
-        int deleted = context.getContentResolver().delete(builder.build(), CalendarContract.Calendars._SYNC_ID + " = ?", new String[]{syncId});
+        int deleted = getContext().getContentResolver().delete(builder.build(), CalendarContract.Calendars._SYNC_ID + " = ?", new String[]{syncId});
         if (deleted > 1) {
             throw new IllegalStateException("Unexpected number of calendars deleted for syncId " + syncId + " and accountName '" + accountName + "': " + deleted);
         }
@@ -253,7 +245,7 @@ public class CalendarDb {
                                 CalendarContract.CALLER_IS_SYNCADAPTER,
                                 "true");
 
-        Uri newUri = context.getContentResolver().insert(builder.build(), cv);
+        Uri newUri = getContext().getContentResolver().insert(builder.build(), cv);
         if (newUri == null) {
             return null;
         } else {
@@ -270,7 +262,7 @@ public class CalendarDb {
     }
 
     public @Nullable Calendar getCalendarForId(long calendarId) {
-        List<Calendar> calendars = getCalendarsFromCursor(context.getContentResolver().query(
+        List<Calendar> calendars = getCalendarsFromCursor(getContext().getContentResolver().query(
                 ContentUris.withAppendedId(CalendarContract.Calendars.CONTENT_URI, calendarId),
                 CALENDAR_PROJECTION_FIELDS,
                 null, null, null)
@@ -284,7 +276,7 @@ public class CalendarDb {
     }
 
     public @Nullable Calendar getCalendarForId(String syncId) throws SecurityException {
-        List<Calendar> calendars = getCalendarsFromCursor(context.getContentResolver().query(
+        List<Calendar> calendars = getCalendarsFromCursor(getContext().getContentResolver().query(
                         CalendarContract.Calendars.CONTENT_URI,
                         CALENDAR_PROJECTION_FIELDS,
                         CalendarContract.Calendars._SYNC_ID + " = ?", new String[]{syncId}, null)
@@ -302,7 +294,7 @@ public class CalendarDb {
                 .buildUpon();
         Uri eventsUri = eventsUriBuilder.build();
 
-        return getCalendarsFromCursor(context.getContentResolver().query(eventsUri, CALENDAR_PROJECTION_FIELDS, null, null, CalendarContract.Calendars.OWNER_ACCOUNT + ", " + CalendarContract.Calendars.CALENDAR_DISPLAY_NAME));
+        return getCalendarsFromCursor(getContext().getContentResolver().query(eventsUri, CALENDAR_PROJECTION_FIELDS, null, null, CalendarContract.Calendars.OWNER_ACCOUNT + ", " + CalendarContract.Calendars.CALENDAR_DISPLAY_NAME));
     }
 
     private List<Calendar> getCalendarsFromCursor(Cursor c) {
@@ -334,6 +326,7 @@ public class CalendarDb {
 
                 calendars.add(calendar);
             }
+            c.close();
         }
         return calendars;
     }
