@@ -27,16 +27,16 @@ public class CreateCalendarIfNotExistsTest extends ApplicationTestCase<Applicati
 
         final CountDownLatch lock = new CountDownLatch(1);
 
-        CalendarDb.with(getContext()).createCalendarIfNotExists(null, CalendarDbTest.UNIQUE_SYNC_ID, CalendarDbTest.DEFAULT_CALENDAR_NAME, CalendarDbTest.DEFAULT_CALENDAR_ACCOUNT_NAME, new CalendarDb.OnCalendarCreatedListener() {
+        CalendarDb.with(getContext()).createCalendarIfNotExists(null, CalendarDbTest.UNIQUE_SYNC_ID, CalendarDbTest.DEFAULT_CALENDAR_NAME, CalendarDbTest.DEFAULT_CALENDAR_ACCOUNT_NAME, new CalendarDb.OnCreatedListener<Calendar>() {
             @Override
-            public void onCalendarCreated(Calendar calendar, boolean alreadyExisted) {
-                calendarIfNotExists = calendar;
+            public void onCreated(Calendar item, boolean alreadyExisted) {
+                calendarIfNotExists = item;
                 expectedAlreadyExisted = alreadyExisted;
                 lock.countDown();
             }
 
             @Override
-            public void onCalendarCreationError(Exception e) {
+            public void onCreationError(Exception e) {
                 lock.countDown();
             }
         });
