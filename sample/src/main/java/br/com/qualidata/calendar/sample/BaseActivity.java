@@ -15,7 +15,7 @@ import br.com.qualidata.calendar.monthview.MonthByWeekFragment;
  * http://blog.denevell.org/android-testing-fragments.html
  */
 @SuppressWarnings("ALL")
-public class TestFragmentActivity extends Activity {
+public abstract class BaseActivity extends Activity {
     public static final int PARENT_VIEW_ID = 1;
 
     @Override
@@ -24,10 +24,5 @@ public class TestFragmentActivity extends Activity {
         final FrameLayout frameLayout = new FrameLayout( this );
         frameLayout.setId(PARENT_VIEW_ID);
         setContentView(frameLayout);
-
-        Fragment f = new MonthByWeekFragment(Calendar.getInstance().getTimeInMillis(), false);
-        getFragmentManager().beginTransaction()
-                .add(PARENT_VIEW_ID, f, "month_frag")
-                .commit();
     }
 }

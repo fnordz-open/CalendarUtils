@@ -94,6 +94,13 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
     };
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mEventLoader.setEventLoaderCallback(this);
+        setRetainInstance(true);
+    }
+
+    @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         mTZUpdater.run();
@@ -101,8 +108,7 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
             mAdapter.setSelectedDay(mSelectedDay);
         }
 
-        mEventLoader = EventLoader.updateAndGetInstance(DefaultEventLoader.class, getActivity(), this);
-        mEventLoader.setDetached(false);
+        mEventLoader.onAttach(activity);
         mEventLoader.setIsMiniMonth(mIsMiniMonth);
         mEventLoader.setShowDetailsInMonth(mShowDetailsInMonth);
 
@@ -120,7 +126,7 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
 
     @Override
     public void onDetach() {
-        mEventLoader.setDetached(true);
+        mEventLoader.onDetach();
         super.onDetach();
         if (mShowCalendarControls) {
             if (mListView != null) {
@@ -185,13 +191,14 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
     }
 
     public MonthByWeekFragment() {
-        this(System.currentTimeMillis(), true);
+        this(System.currentTimeMillis(), true, new DefaultEventLoader());
     }
 
     @SuppressLint("ValidFragment")
-    public MonthByWeekFragment(long initialTime, boolean isMiniMonth) {
+    public MonthByWeekFragment(long initialTime, boolean isMiniMonth, EventLoader eventLoader) {
         super(initialTime);
         mIsMiniMonth = isMiniMonth;
+        mEventLoader = eventLoader;
     }
 
     @Override

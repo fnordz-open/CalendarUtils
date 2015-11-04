@@ -9,15 +9,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.util.Pair;
 import android.util.Log;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
-import java.util.WeakHashMap;
 
 import br.com.qualidata.calendar.model.Event;
 
-/**
- * Created by Ricardo on 02/11/2015.
- */
 public abstract class EventLoader<D> implements LoaderManager.LoaderCallbacks<D> {
 
     public interface EventLoaderCallback {
@@ -32,28 +27,6 @@ public abstract class EventLoader<D> implements LoaderManager.LoaderCallbacks<D>
     }
 
     private static final String TAG = "EventLoader";
-
-    private static WeakHashMap<Activity, WeakReference<EventLoader>> instances = new WeakHashMap<>();
-
-    public static EventLoader updateAndGetInstance(Class<? extends EventLoader> eventLoaderClass, Activity activity, EventLoaderCallback callback) {
-        synchronized (instances) {
-            EventLoader eventLoader = null;
-            WeakReference<EventLoader> weakController = instances.get(activity);
-            if (weakController != null) {
-                eventLoader = weakController.get();
-            }
-
-            if (eventLoader == null) {
-                try {
-                    eventLoader = eventLoaderClass.getDeclaredConstructor(Activity.class, EventLoaderCallback.class).newInstance(activity, callback);
-                    instances.put(activity, new WeakReference(eventLoader));
-                } catch (Exception e) {
-                    Log.e(TAG, e.getMessage(), e);
-                }
-            }
-            return eventLoader;
-        }
-    }
 
     private final Runnable mUpdateLoader = new Runnable() {
         @Override
@@ -74,10 +47,10 @@ public abstract class EventLoader<D> implements LoaderManager.LoaderCallbacks<D>
         }
     };
 
-    private Loader mLoader;
+    private Loader<D> mLoader;
 
-    private final Activity mActivity;
-    protected final EventLoaderCallback mCallback;
+    private Activity mActivity;
+    protected EventLoaderCallback mCallback;
 
     protected Handler mHandler;
     private volatile boolean mShouldLoad = true;
@@ -86,15 +59,17 @@ public abstract class EventLoader<D> implements LoaderManager.LoaderCallbacks<D>
     private boolean mIsMiniMonth;
     private boolean mShowDetailsInMonth = false;
 
-    protected EventLoader(Activity activity, EventLoaderCallback callback) {
-        this.mActivity = activity;
+    public EventLoader() {
         mHandler = new Handler();
-        mCallback = callback;
+    }
+
+    public void setEventLoaderCallback(EventLoaderCallback callback) {
+        this.mCallback = callback;
     }
 
     public abstract @Nullable Pair<Integer, Integer> getLoadedFirstAndLastJulianDays();
 
-    public Loader startLoader() {
+    public Loader<D> startLoader() {
         return mActivity.getLoaderManager().initLoader(0, null, this);
     }
 
@@ -112,8 +87,14 @@ public abstract class EventLoader<D> implements LoaderManager.LoaderCallbacks<D>
         }
     }
 
-    public void setDetached(boolean detached) {
-        this.mIsDetached = detached;
+    public void onAttach(Activity activity) {
+        this.mIsDetached = false;
+        this.mActivity = activity;
+    }
+
+    public void onDetach() {
+        this.mIsDetached = true;
+        this.mActivity = null;
     }
 
     public void setIsMiniMonth(boolean value) {
@@ -153,8 +134,8 @@ public abstract class EventLoader<D> implements LoaderManager.LoaderCallbacks<D>
         synchronized (mUpdateLoader) {
             mCallback.onCreateEventLoader();
             mLoader = onCreateLoaderInternal(id, args);
+            return mLoader;
         }
-        return mLoader;
     }
 
     protected abstract Loader<D> onCreateLoaderInternal(int id, Bundle args);

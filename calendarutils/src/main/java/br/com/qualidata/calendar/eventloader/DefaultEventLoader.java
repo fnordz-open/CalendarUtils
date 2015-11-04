@@ -19,9 +19,6 @@ import java.util.List;
 import br.com.qualidata.calendar.model.Event;
 import br.com.qualidata.calendar.Utils;
 
-/**
- * Created by Ricardo on 02/11/2015.
- */
 public class DefaultEventLoader extends EventLoader<Cursor> {
 
     private static final String TAG = "DefaultEventLoader";
@@ -42,8 +39,8 @@ public class DefaultEventLoader extends EventLoader<Cursor> {
     // disposable variable used for time calculations
     protected Time mTempTime = new Time();
 
-    protected DefaultEventLoader(Activity activity, EventLoaderCallback callback) {
-        super(activity, callback);
+    public DefaultEventLoader() {
+        super();
     }
 
     @Override
@@ -115,6 +112,10 @@ public class DefaultEventLoader extends EventLoader<Cursor> {
         return where;
     }
 
+    protected String[] updateWhereSelectedArgs() {
+        return null;
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -134,10 +135,11 @@ public class DefaultEventLoader extends EventLoader<Cursor> {
 
         mEventUri = updateUri();
         String where = updateWhere();
+        String[] whereSelectedArgs = updateWhereSelectedArgs();
 
         CursorLoader loader = new CursorLoader(
                 getActivity(), mEventUri, Event.EVENT_PROJECTION, where,
-                null /* WHERE_CALENDARS_SELECTED_ARGS */, INSTANCES_SORT_ORDER);
+                whereSelectedArgs, INSTANCES_SORT_ORDER);
         loader.setUpdateThrottle(LOADER_THROTTLE_DELAY);
 
         if (Log.isLoggable(TAG, Log.DEBUG)) {
@@ -164,7 +166,7 @@ public class DefaultEventLoader extends EventLoader<Cursor> {
             // result
             return;
         }
-        ArrayList<Event> events = new ArrayList<Event>();
+        ArrayList<Event> events = new ArrayList<>();
         Event.buildEventsFromCursor(
                 events, data, getActivity(), julianDays.first, julianDays.second);
         mCallback.onEventsLoaded(events);
