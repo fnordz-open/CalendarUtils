@@ -23,7 +23,7 @@ import br.com.qualidata.calendar.model.Calendar;
  */
 public class CalendarDb extends DbHandler<Calendar> {
 
-    private static final String LOG_TAG = "CalendarDb";
+    private static final String TAG = "CalendarDb";
 
     public static final int CALENDAR_PROJECTION_ID = 0;
     public static final int CALENDAR_PROJECTION_NAME = 1;

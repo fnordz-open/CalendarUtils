@@ -2,10 +2,15 @@ package br.com.qualidata.calendar.sample;
 
 import android.app.Application;
 import android.database.Cursor;
+import android.os.SystemClock;
 import android.test.ApplicationTestCase;
+import android.util.Log;
 
 import org.junit.Test;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;

@@ -203,7 +203,7 @@ public class CalendarEventModel implements Serializable {
      */
     public String mUri = null;
     public long mId = -1;
-    public long mCalendarId = -1;
+    public final long mCalendarId;
     public String mCalendarDisplayName = ""; // Make sure this is in sync with the mCalendarId
     private int mCalendarColor = -1;
     private boolean mCalendarColorInitialized = false;
@@ -223,8 +223,10 @@ public class CalendarEventModel implements Serializable {
     private boolean mEventColorInitialized = false;
 
     // PROVIDER_NOTES owner account comes from the calendars table
-    public String mOwnerAccount = null;
-    public String mTitle = null;
+    public final String mOwnerAccount;
+
+    private String mTitle = null;
+
     public String mLocation = null;
     public String mDescription = null;
     public String mRrule = null;
@@ -235,15 +237,15 @@ public class CalendarEventModel implements Serializable {
      */
     public boolean mIsOrganizer = true;
     public boolean mIsFirstEventInSeries = true;
-
     // This should be set the same as mStart when created and is used for making changes to
     // recurring events. It should not be updated after it is initially set.
-    public long mOriginalStart = -1;
-    public long mStart = -1;
+    private final long mOriginalStart;
 
+    public long mStart = -1;
     // This should be set the same as mEnd when created and is used for making changes to
     // recurring events. It should not be updated after it is initially set.
-    public long mOriginalEnd = -1;
+    public final long mOriginalEnd;
+
     public long mEnd = -1;
     public String mDuration = null;
     public String mTimezone = null;
@@ -251,10 +253,10 @@ public class CalendarEventModel implements Serializable {
     public boolean mAllDay = false;
     public boolean mHasAlarm = false;
     public int mAvailability = Events.AVAILABILITY_BUSY;
-
     // PROVIDER_NOTES How does an event not have attendee data? The owner is added
     // as an attendee by default.
     public boolean mHasAttendeeData = true;
+
     public int mSelfAttendeeStatus = -1;
     public int mOwnerAttendeeId = -1;
     public String mOriginalSyncId = null;
@@ -264,10 +266,9 @@ public class CalendarEventModel implements Serializable {
     public boolean mGuestsCanModify = false;
     public boolean mGuestsCanInviteOthers = false;
     public boolean mGuestsCanSeeGuests = false;
-
     public boolean mOrganizerCanRespond = false;
-    public int mCalendarAccessLevel = Calendars.CAL_ACCESS_CONTRIBUTOR;
 
+    public int mCalendarAccessLevel = Calendars.CAL_ACCESS_CONTRIBUTOR;
     public int mEventStatus = Events.STATUS_CONFIRMED;
 
     // The model can't be updated with a calendar cursor until it has been
@@ -275,22 +276,27 @@ public class CalendarEventModel implements Serializable {
     public boolean mModelUpdatedWithEventCursor;
 
     public int mAccessLevel = 0;
+
     public ArrayList<ReminderEntry> mReminders;
     public ArrayList<ReminderEntry> mDefaultReminders;
-
     // PROVIDER_NOTES Using EditEventHelper the owner should not be included in this
     // list and will instead be added by saveEvent. Is this what we want?
     public LinkedHashMap<String, Attendee> mAttendeesList;
 
-    public CalendarEventModel() {
+    public CalendarEventModel(long calendarId, long start, long end, String ownerAccount) {
         mReminders = new ArrayList<ReminderEntry>();
         mDefaultReminders = new ArrayList<ReminderEntry>();
         mAttendeesList = new LinkedHashMap<String, Attendee>();
         mTimezone = TimeZone.getDefault().getID();
+
+        this.mOriginalStart = this.mStart = start;
+        this.mOriginalEnd = this.mEnd = end;
+        this.mCalendarId = calendarId;
+        this.mOwnerAccount = ownerAccount;
     }
 
-    public CalendarEventModel(Context context) {
-        this();
+    public CalendarEventModel(Context context, long calendarId, long start, long end, String ownerAccount) {
+        this(calendarId, start, end, ownerAccount);
 
         mTimezone = Utils.getTimeZone(context, null);
         SharedPreferences prefs = GeneralPreferences.getSharedPreferences(context);
@@ -306,8 +312,8 @@ public class CalendarEventModel implements Serializable {
         }
     }
 
-    public CalendarEventModel(Context context, Intent intent) {
-        this(context);
+    public CalendarEventModel(Context context, Intent intent, long calendarId, long start, long end, String ownerAccount) {
+        this(context, calendarId, start, end, ownerAccount);
 
         if (intent == null) {
             return;
@@ -362,6 +368,19 @@ public class CalendarEventModel implements Serializable {
         }
     }
 
+    public String getTitle() {
+        return mTitle;
+    }
+
+    public void setId(long id) {
+        mId = id;
+        mOriginalId = id;
+    }
+
+    public void setTitle(String mTitle) {
+        this.mTitle = mTitle;
+    }
+
     public boolean isValid() {
         if (mCalendarId == -1) {
             return false;
@@ -386,65 +405,6 @@ public class CalendarEventModel implements Serializable {
         }
 
         return true;
-    }
-
-    public void clear() {
-        mUri = null;
-        mId = -1;
-        mCalendarId = -1;
-        mCalendarColor = -1;
-        mCalendarColorInitialized = false;
-
-        mEventColorCache = null;
-        mEventColor = -1;
-        mEventColorInitialized = false;
-
-        mSyncId = null;
-        mSyncAccount = null;
-        mSyncAccountType = null;
-        mOwnerAccount = null;
-
-        mTitle = null;
-        mLocation = null;
-        mDescription = null;
-        mRrule = null;
-        mOrganizer = null;
-        mOrganizerDisplayName = null;
-        mIsOrganizer = true;
-        mIsFirstEventInSeries = true;
-
-        mOriginalStart = -1;
-        mStart = -1;
-        mOriginalEnd = -1;
-        mEnd = -1;
-        mDuration = null;
-        mTimezone = null;
-        mTimezone2 = null;
-        mAllDay = false;
-        mHasAlarm = false;
-
-        mHasAttendeeData = true;
-        mSelfAttendeeStatus = -1;
-        mOwnerAttendeeId = -1;
-        mOriginalId = -1;
-        mOriginalSyncId = null;
-        mOriginalTime = null;
-        mOriginalAllDay = null;
-
-        mGuestsCanModify = false;
-        mGuestsCanInviteOthers = false;
-        mGuestsCanSeeGuests = false;
-        mAccessLevel = 0;
-        mEventStatus = Events.STATUS_CONFIRMED;
-        mOrganizerCanRespond = false;
-        mCalendarAccessLevel = Calendars.CAL_ACCESS_CONTRIBUTOR;
-        mModelUpdatedWithEventCursor = false;
-        mCalendarAllowedReminders = null;
-        mCalendarAllowedAttendeeTypes = null;
-        mCalendarAllowedAvailability = null;
-
-        mReminders = new ArrayList<ReminderEntry>();
-        mAttendeesList.clear();
     }
 
     public void addAttendee(Attendee attendee) {
