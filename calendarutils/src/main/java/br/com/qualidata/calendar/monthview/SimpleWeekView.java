@@ -330,6 +330,12 @@ public class SimpleWeekView extends View {
         mMonthNumPaint.setTextAlign(Align.CENTER);
     }
 
+    // TODO-Mauricio: resolveu problema do item click, mas ao iniciar scroll marca o item tocado como se fosse selecionado.
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return false;
+    }
+
     /**
      * Returns the month of the first day in this week
      *

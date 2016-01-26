@@ -32,6 +32,7 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -53,6 +54,10 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
 
     public interface OnMonthChangedCallback {
         void onMonthChanged(int currentMonth, String currentMonthName);
+    }
+
+    public interface OnDaySelectedCallback {
+        void onDaySelected(long milliseconds);
     }
 
     private static final String TAG = "MonthFragment";
@@ -80,6 +85,7 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
     private boolean mShowCalendarControls;
 
     private OnMonthChangedCallback mOnMonthChangedCallback;
+    private OnDaySelectedCallback onDaySelectedCallback;
     private EventLoader mEventLoader;
 
     private final Runnable mTZUpdater = new Runnable() {
@@ -114,6 +120,11 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
             throw new ClassCastException("activity must implement OnMonthChangedCallback");
         }
         mOnMonthChangedCallback = (OnMonthChangedCallback)activity;
+
+        if (!(activity instanceof  OnDaySelectedCallback)) {
+            throw new ClassCastException("activity must implement OnDaySelectedCallback");
+        }
+        onDaySelectedCallback = (OnDaySelectedCallback) activity;
 
         mTZUpdater.run();
         if (mAdapter != null) {
@@ -188,6 +199,13 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
         super.onActivityCreated(savedInstanceState);
         mListView.setSelector(new StateListDrawable());
         mListView.setOnTouchListener(this);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Time time = ((SimpleWeekView)view).getDayFromLocation(touchPositionX);
+                onDaySelectedCallback.onDaySelected(time.toMillis(false));
+            }
+        });
 
         if (!mIsMiniMonth) {
             mListView.setBackgroundColor(getResources().getColor(R.color.month_bgcolor));
@@ -339,9 +357,12 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
         mScrollStateChangedRunnable.doScrollStateChange(view, scrollState);
     }
 
+    private float touchPositionX = 0;
+
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         mDesiredDay.setToNow();
+        touchPositionX = event.getX();
         return false;
         // TODO post a cleanup to push us back onto the grid if something went
         // wrong in a scroll such as the user stopping the view but not
