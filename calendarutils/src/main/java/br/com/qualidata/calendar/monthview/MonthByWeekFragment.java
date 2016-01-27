@@ -32,7 +32,6 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.AdapterView;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -42,11 +41,11 @@ import br.com.qualidata.calendar.CalendarController;
 import br.com.qualidata.calendar.CalendarController.EventInfo;
 import br.com.qualidata.calendar.CalendarController.EventType;
 import br.com.qualidata.calendar.CalendarController.ViewType;
-import br.com.qualidata.calendar.eventloader.DefaultEventLoader;
-import br.com.qualidata.calendar.model.Event;
-import br.com.qualidata.calendar.eventloader.EventLoader;
 import br.com.qualidata.calendar.R;
 import br.com.qualidata.calendar.Utils;
+import br.com.qualidata.calendar.eventloader.DefaultEventLoader;
+import br.com.qualidata.calendar.eventloader.EventLoader;
+import br.com.qualidata.calendar.model.Event;
 
 public class MonthByWeekFragment extends SimpleDayPickerFragment implements
         CalendarController.EventHandler, OnScrollListener,
@@ -173,7 +172,13 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
                 Time.getJulianDay(mSelectedDay.toMillis(true), mSelectedDay.gmtoff));
         weekParams.put(SimpleWeeksAdapter.WEEK_PARAMS_DAYS_PER_WEEK, mDaysPerWeek);
         if (mAdapter == null) {
-            mAdapter = new MonthByWeekAdapter(getActivity(), weekParams);
+            mAdapter = new MonthByWeekAdapter(getActivity(), weekParams) {
+                @Override
+                protected void onDayTapped(Time day) {
+                    super.onDayTapped(day);
+                    onDaySelectedCallback.onDaySelected(day.toMillis(false));
+                }
+            };
             mAdapter.registerDataSetObserver(mObserver);
         } else {
             mAdapter.updateParams(weekParams);
@@ -199,13 +204,6 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
         super.onActivityCreated(savedInstanceState);
         mListView.setSelector(new StateListDrawable());
         mListView.setOnTouchListener(this);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Time time = ((SimpleWeekView)view).getDayFromLocation(touchPositionX);
-                onDaySelectedCallback.onDaySelected(time.toMillis(false));
-            }
-        });
 
         if (!mIsMiniMonth) {
             mListView.setBackgroundColor(getResources().getColor(R.color.month_bgcolor));
