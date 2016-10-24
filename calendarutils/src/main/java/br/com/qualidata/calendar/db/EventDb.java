@@ -1,6 +1,5 @@
 package br.com.qualidata.calendar.db;
 
-import android.content.ContentProviderOperation;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,14 +12,12 @@ import android.text.format.Time;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.TimeZone;
 
 import br.com.qualidata.calendar.model.CalendarEventModel;
 import br.com.qualidata.calendar.model.Event;
 
-import static br.com.qualidata.calendar.model.CalendarEventModel.*;
+import static br.com.qualidata.calendar.model.CalendarEventModel.ReminderEntry;
 
 /**
  * Created by Ricardo on 04/11/2015.
@@ -169,6 +166,11 @@ public class EventDb extends DbHandler<Event> {
         }
         values.put(CalendarContract.Events.ACCESS_LEVEL, accessLevel);
         values.put(CalendarContract.Events.STATUS, model.mEventStatus);
+        values.put(CalendarContract.Events.EVENT_COLOR, model.getEventColor());
+        /*
+        // TODO-Mauricio modificacao para funcionar troca de cor no calendario.
+        // Entender como funciona corretamente para modificar as linhas de codigo corretas.
+
         if (model.isEventColorInitialized()) {
             if (model.getEventColor() == model.getCalendarColor()) {
                 //values.put(CalendarContract.Events.EVENT_COLOR_KEY, NO_EVENT_COLOR);
@@ -176,6 +178,7 @@ public class EventDb extends DbHandler<Event> {
                 values.put(CalendarContract.Events.EVENT_COLOR_KEY, model.getEventColorKey());
             }
         }
+        */
         return values;
     }
 }
