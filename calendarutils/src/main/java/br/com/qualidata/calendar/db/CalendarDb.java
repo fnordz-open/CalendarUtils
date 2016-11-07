@@ -45,6 +45,7 @@ public class CalendarDb extends DbHandler<Calendar> {
             CalendarContract.Calendars.ACCOUNT_NAME,
             CalendarContract.Calendars.ACCOUNT_TYPE,
             CalendarContract.Calendars.OWNER_ACCOUNT,
+            // TODO: API Mínima é 17. Corrigir!
             CalendarContract.Calendars.IS_PRIMARY,
             CalendarContract.Calendars.VISIBLE,
             CalendarContract.Calendars.SYNC_EVENTS,
