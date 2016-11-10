@@ -39,8 +39,8 @@
             android:hint="@string/hint_time_zone_search"
             android:imeOptions="actionDone"
             android:minHeight="48dp"
-            android:singleLine="true"
-            android:paddingRight="30dp" >
+            android:paddingRight="30dp"
+            android:maxLines="1">
         </AutoCompleteTextView>
         <ImageButton
             android:id="@+id/clear_search"
