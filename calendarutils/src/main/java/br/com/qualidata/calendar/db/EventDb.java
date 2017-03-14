@@ -1,8 +1,11 @@
 package br.com.qualidata.calendar.db;
 
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.EntityIterator;
+import android.database.Cursor;
 import android.net.Uri;
 import android.provider.CalendarContract;
 import android.support.annotation.NonNull;
@@ -47,6 +50,27 @@ public class EventDb extends DbHandler<Event> {
         return getContentResolver().delete(CalendarContract.Events.CONTENT_URI,
                 CalendarContract.Events.CALENDAR_ID + " = ?",
                 new String[]{Long.toString(calendarId)});
+    }
+
+    public boolean hasEventsForCalendarId(long calendarId) {
+
+        ContentResolver contentResolver = getContext().getContentResolver();
+        String selection = "(" + CalendarContract.Events.CALENDAR_ID + " = ?)";
+        String[] selectionArgs = new String[] { calendarId + "" };
+        Cursor cursor = contentResolver.query(CalendarContract.Events.CONTENT_URI, null, selection, selectionArgs, null);
+
+        EntityIterator it = CalendarContract.EventsEntity.newEntityIterator(cursor, contentResolver);
+
+        boolean hasEvents = false;
+        if (cursor != null) {
+            while (it.hasNext()) {
+                hasEvents = true;
+                break;
+            }
+            cursor.close();
+        }
+
+        return hasEvents;
     }
 
     /**
