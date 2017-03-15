@@ -91,7 +91,7 @@ public class CalendarDb extends DbHandler<Calendar> {
                     }
 
                     if (!TextUtils.isEmpty(knownSyncId)) {
-                        if (hasCalendarForId(knownSyncId)) {
+                        if (hasCalendarForSyncId(knownSyncId)) {
                             alreadyExisted = true;
                             return getCalendarForId(knownSyncId);
                         }
@@ -139,7 +139,7 @@ public class CalendarDb extends DbHandler<Calendar> {
         return exists;
     }
 
-    public boolean hasCalendarForId(String syncId) throws SecurityException {
+    public boolean hasCalendarForSyncId(String syncId) throws SecurityException {
         if (TextUtils.isEmpty(syncId)) {
             return false;
         }
@@ -155,6 +155,26 @@ public class CalendarDb extends DbHandler<Calendar> {
             c.close();
         }
         return exists;
+    }
+
+    public long getCalendarIdForSyncId(String syncId) throws SecurityException {
+
+        long calendarId = 0;
+
+        if (TextUtils.isEmpty(syncId)) {
+            return calendarId;
+        }
+
+        Cursor c = getContext().getContentResolver().query(CalendarContract.Calendars.CONTENT_URI,
+                new String[]{CalendarContract.Calendars._ID}, CalendarContract.Calendars._SYNC_ID + " = ?", new String[]{syncId}, null);
+        if (c != null) {
+            while (c.moveToNext()) {
+                calendarId = c.getLong(CalendarDb.CALENDAR_PROJECTION_ID);
+                break;
+            }
+            c.close();
+        }
+        return calendarId;
     }
 
     public boolean deleteCalendar(long calendarId, @NonNull String accountName) {
