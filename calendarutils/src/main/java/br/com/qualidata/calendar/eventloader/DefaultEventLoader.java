@@ -1,6 +1,5 @@
 package br.com.qualidata.calendar.eventloader;
 
-import android.app.Activity;
 import android.content.ContentUris;
 import android.content.CursorLoader;
 import android.content.Loader;
@@ -16,8 +15,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import br.com.qualidata.calendar.model.Event;
 import br.com.qualidata.calendar.Utils;
+import br.com.qualidata.calendar.model.Event;
 
 public class DefaultEventLoader extends EventLoader<Cursor> {
 
@@ -44,7 +43,7 @@ public class DefaultEventLoader extends EventLoader<Cursor> {
     }
 
     @Override
-    protected void updateLoader() {
+    public void updateLoader() {
         if (!shouldLoad() || getLoader() == null) {
             return;
         }
@@ -167,9 +166,7 @@ public class DefaultEventLoader extends EventLoader<Cursor> {
             return;
         }
         ArrayList<Event> events = new ArrayList<>();
-        Event.buildEventsFromCursor(
-                events, data, getActivity(), julianDays.first, julianDays.second);
+        Event.buildEventsFromCursor(events, data, getActivity(), julianDays.first, julianDays.second);
         mCallback.onEventsLoaded(events);
     }
-
 }

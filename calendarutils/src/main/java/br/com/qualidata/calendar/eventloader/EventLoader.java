@@ -15,15 +15,13 @@ import br.com.qualidata.calendar.model.Event;
 
 public abstract class EventLoader<D> implements LoaderManager.LoaderCallbacks<D> {
 
+    public static final int EVENT_LOADER_ID = 0;
+
     public interface EventLoaderCallback {
         void onCreateEventLoader();
-
         void onEventsLoaded(List<Event> events);
-
         Pair<Integer, Integer> getCurrentFirstAndLastJulianDays();
-
         Pair<Integer, Integer> updateLoadedFirstAndLastJulianDays();
-
     }
 
     private static final String TAG = "EventLoader";
@@ -70,10 +68,10 @@ public abstract class EventLoader<D> implements LoaderManager.LoaderCallbacks<D>
     public abstract @Nullable Pair<Integer, Integer> getLoadedFirstAndLastJulianDays();
 
     public Loader<D> startLoader() {
-        return mActivity.getLoaderManager().initLoader(0, null, this);
+        return mActivity.getLoaderManager().initLoader(EVENT_LOADER_ID, null, this);
     }
 
-    protected abstract void updateLoader();
+    public abstract void updateLoader();
 
     public final void stopLoader() {
         synchronized (mUpdateLoader) {

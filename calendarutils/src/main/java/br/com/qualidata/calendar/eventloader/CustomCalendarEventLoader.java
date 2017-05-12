@@ -1,6 +1,5 @@
 package br.com.qualidata.calendar.eventloader;
 
-import android.app.Activity;
 import android.provider.CalendarContract;
 
 import br.com.qualidata.calendar.model.Calendar;

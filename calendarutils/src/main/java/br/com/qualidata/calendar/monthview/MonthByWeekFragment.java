@@ -403,4 +403,8 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
 
         return new Pair<>(mFirstLoadedJulianDay, mLastLoadedJulianDay);
     }
+
+    public EventLoader getEventLoader() {
+        return mEventLoader;
+    }
 }
