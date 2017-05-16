@@ -187,8 +187,7 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
     }
 
     @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v;
         if (mIsMiniMonth) {
             v = inflater.inflate(R.layout.month_by_week, container, false);
@@ -406,5 +405,9 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
 
     public EventLoader getEventLoader() {
         return mEventLoader;
+    }
+
+    public boolean hasEventLoader() {
+        return mEventLoader != null;
     }
 }

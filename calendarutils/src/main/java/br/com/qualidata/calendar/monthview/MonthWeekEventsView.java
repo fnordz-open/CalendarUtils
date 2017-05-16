@@ -31,6 +31,7 @@ import android.graphics.Paint.Style;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.provider.CalendarContract.Attendees;
+import android.support.v4.content.ContextCompat;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
@@ -50,8 +51,8 @@ import java.util.List;
 import java.util.Locale;
 
 import br.com.qualidata.calendar.R;
-import br.com.qualidata.calendar.model.Event;
 import br.com.qualidata.calendar.Utils;
+import br.com.qualidata.calendar.model.Event;
 
 public class MonthWeekEventsView extends SimpleWeekView {
 
@@ -116,8 +117,6 @@ public class MonthWeekEventsView extends SimpleWeekView {
     // events being drawn on each day. The code will expand this if necessary.
     protected FloatRef mEventOutlines = new FloatRef(10 * 4 * 4 * 7);
 
-
-
     protected static StringBuilder mStringBuilder = new StringBuilder(50);
     // TODO recreate formatter when locale changes
     protected static Formatter mFormatter = new Formatter(mStringBuilder, Locale.getDefault());
@@ -133,7 +132,6 @@ public class MonthWeekEventsView extends SimpleWeekView {
     protected Paint mDNAAllDayPaint;
     protected Paint mDNATimePaint;
     protected Paint mEventSquarePaint;
-
 
     protected Drawable mTodayDrawable;
 
@@ -220,7 +218,6 @@ public class MonthWeekEventsView extends SimpleWeekView {
         public void setFadingIn(boolean fadingIn) {
             mFadingIn = fadingIn;
         }
-
     }
 
     private int[] mDayXs;
@@ -289,7 +286,6 @@ public class MonthWeekEventsView extends SimpleWeekView {
             mDayXs = new int[numDays];
             for (int day = 0; day < numDays; day++) {
                 mDayXs[day] = computeDayLeftPosition(day) + DNA_WIDTH / 2 + DNA_SIDE_PADDING;
-
             }
 
             int top = DAY_SEPARATOR_INNER_WIDTH + DNA_MARGIN + DNA_ALL_DAY_HEIGHT + 1;
@@ -310,31 +306,29 @@ public class MonthWeekEventsView extends SimpleWeekView {
                         + sortedEvents.size() + " days=" + mNumDays);
             }
             mEvents = null;
-            return;
         }
     }
 
     protected void loadColors(Context context) {
-        Resources res = context.getResources();
-        mMonthWeekNumColor = res.getColor(R.color.month_week_num_color);
-        mMonthNumColor = res.getColor(R.color.month_day_number);
-        mMonthNumOtherColor = res.getColor(R.color.month_day_number_other);
-        mMonthNumTodayColor = res.getColor(R.color.month_today_number);
+        mMonthWeekNumColor = ContextCompat.getColor(context, R.color.month_week_num_color);
+        mMonthNumColor = ContextCompat.getColor(context, R.color.month_day_number);
+        mMonthNumOtherColor = ContextCompat.getColor(context, R.color.month_day_number_other);
+        mMonthNumTodayColor = ContextCompat.getColor(context, R.color.month_today_number);
         mMonthNameColor = mMonthNumColor;
         mMonthNameOtherColor = mMonthNumOtherColor;
-        mMonthEventColor = res.getColor(R.color.month_event_color);
-        mMonthDeclinedEventColor = res.getColor(R.color.agenda_item_declined_color);
-        mMonthDeclinedExtrasColor = res.getColor(R.color.agenda_item_where_declined_text_color);
-        mMonthEventExtraColor = res.getColor(R.color.month_event_extra_color);
-        mMonthEventOtherColor = res.getColor(R.color.month_event_other_color);
-        mMonthEventExtraOtherColor = res.getColor(R.color.month_event_extra_other_color);
-        mMonthBGTodayColor = res.getColor(R.color.month_today_bgcolor);
-        mMonthBGOtherColor = res.getColor(R.color.month_other_bgcolor);
-        mMonthBGColor = res.getColor(R.color.month_bgcolor);
-        mDaySeparatorInnerColor = res.getColor(R.color.month_grid_lines);
-        mTodayAnimateColor = res.getColor(R.color.today_highlight_color);
-        mClickedDayColor = res.getColor(R.color.day_clicked_background_color);
-        mTodayDrawable = res.getDrawable(R.drawable.today_blue_week_holo_light);
+        mMonthEventColor = ContextCompat.getColor(context, R.color.month_event_color);
+        mMonthDeclinedEventColor = ContextCompat.getColor(context, R.color.agenda_item_declined_color);
+        mMonthDeclinedExtrasColor = ContextCompat.getColor(context, R.color.agenda_item_where_declined_text_color);
+        mMonthEventExtraColor = ContextCompat.getColor(context, R.color.month_event_extra_color);
+        mMonthEventOtherColor = ContextCompat.getColor(context, R.color.month_event_other_color);
+        mMonthEventExtraOtherColor = ContextCompat.getColor(context, R.color.month_event_extra_other_color);
+        mMonthBGTodayColor = ContextCompat.getColor(context, R.color.month_today_bgcolor);
+        mMonthBGOtherColor = ContextCompat.getColor(context, R.color.month_other_bgcolor);
+        mMonthBGColor = ContextCompat.getColor(context, R.color.month_bgcolor);
+        mDaySeparatorInnerColor = ContextCompat.getColor(context, R.color.month_grid_lines);
+        mTodayAnimateColor = ContextCompat.getColor(context, R.color.today_highlight_color);
+        mClickedDayColor = ContextCompat.getColor(context, R.color.day_clicked_background_color);
+        mTodayDrawable = ContextCompat.getDrawable(context, R.drawable.today_blue_week_holo_light);
     }
 
     /**
@@ -351,8 +345,8 @@ public class MonthWeekEventsView extends SimpleWeekView {
             TEXT_SIZE_EVENT_TITLE = resources.getInteger(R.integer.text_size_event_title);
             TEXT_SIZE_MONTH_NUMBER = resources.getInteger(R.integer.text_size_month_number);
             SIDE_PADDING_MONTH_NUMBER = resources.getInteger(R.integer.month_day_number_margin);
-            CONFLICT_COLOR = resources.getColor(R.color.month_dna_conflict_time_color);
-            EVENT_TEXT_COLOR = resources.getColor(R.color.calendar_event_text_color);
+            CONFLICT_COLOR = ContextCompat.getColor(getContext(), R.color.month_dna_conflict_time_color);
+            EVENT_TEXT_COLOR = ContextCompat.getColor(getContext(), R.color.calendar_event_text_color);
             if (mScale != 1) {
                 TOP_PADDING_MONTH_NUMBER *= mScale;
                 TOP_PADDING_WEEK_NUMBER *= mScale;
@@ -970,8 +964,7 @@ public class MonthWeekEventsView extends SimpleWeekView {
         // Draw event and conflict times
         if (mDna != null) {
             for (Utils.DNAStrand strand : mDna.values()) {
-                if (strand.color == CONFLICT_COLOR || strand.points == null
-                        || strand.points.length == 0) {
+                if (strand.color == CONFLICT_COLOR || strand.points == null || strand.points.length == 0) {
                     continue;
                 }
                 mDNATimePaint.setColor(strand.color);
@@ -979,10 +972,16 @@ public class MonthWeekEventsView extends SimpleWeekView {
             }
             // Draw black last to make sure it's on top
             Utils.DNAStrand strand = mDna.get(CONFLICT_COLOR);
-            if (strand != null && strand.points != null && strand.points.length != 0) {
-                mDNATimePaint.setColor(strand.color);
-                canvas.drawLines(strand.points, mDNATimePaint);
-            }
+
+            // O condicional abaixo foi comentado para evitar falsas ocorrências de conflito.
+            // Motivo: ao dar refresh no calendário, uma linha preta (que representa conflito) era sempre desenhada
+            // sobre a linha que representava um dado evento.
+            // No entanto, não havia um conflito real, pois vários eventos para um mesmo horário.
+
+            //if (strand != null && strand.points != null && strand.points.length != 0) {
+            //    mDNATimePaint.setColor(strand.color);
+            //    canvas.drawLines(strand.points, mDNATimePaint);
+            //}
             if (mDayXs == null) {
                 return;
             }
@@ -1103,6 +1102,7 @@ public class MonthWeekEventsView extends SimpleWeekView {
         mClickedDayIndex = getDayIndexFromLocation(xLocation);
         invalidate();
     }
+
     public void clearClickedDay() {
         mClickedDayIndex = -1;
         invalidate();

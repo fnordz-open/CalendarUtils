@@ -79,7 +79,7 @@ public class EventDb extends DbHandler<Event> {
      * @param model The event model to save
      * @return The id of the inserted event. -1 if it was not inserted properly
      */
-    public long insertEvent(@NonNull CalendarEventModel model) throws SecurityException{
+    public long insertEvent(@NonNull CalendarEventModel model) throws SecurityException {
         // It's a problem if we try to save a non-existent or invalid model or if we're
         // modifying an existing event and we have the wrong original model
         if (model == null) {
@@ -191,18 +191,7 @@ public class EventDb extends DbHandler<Event> {
         values.put(CalendarContract.Events.ACCESS_LEVEL, accessLevel);
         values.put(CalendarContract.Events.STATUS, model.mEventStatus);
         values.put(CalendarContract.Events.EVENT_COLOR, model.getEventColor());
-        /*
-        // TODO-Mauricio modificacao para funcionar troca de cor no calendario.
-        // Entender como funciona corretamente para modificar as linhas de codigo corretas.
 
-        if (model.isEventColorInitialized()) {
-            if (model.getEventColor() == model.getCalendarColor()) {
-                //values.put(CalendarContract.Events.EVENT_COLOR_KEY, NO_EVENT_COLOR);
-            } else {
-                values.put(CalendarContract.Events.EVENT_COLOR_KEY, model.getEventColorKey());
-            }
-        }
-        */
         return values;
     }
 }

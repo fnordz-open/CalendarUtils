@@ -35,6 +35,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.CalendarContract.Calendars;
+import android.support.v4.content.ContextCompat;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -66,7 +67,7 @@ import java.util.regex.Pattern;
 import br.com.qualidata.calendar.model.Event;
 
 import static android.provider.CalendarContract.EXTRA_EVENT_BEGIN_TIME;
-import static br.com.qualidata.calendar.CalendarUtils.*;
+import static br.com.qualidata.calendar.CalendarUtils.TimeZoneUtils;
 
 public class Utils {
     private static final boolean DEBUG = false;
@@ -899,7 +900,7 @@ public class Utils {
                 Log.wtf(TAG, "No context and haven't loaded parameters yet! Can't create DNA.");
             }
             Resources res = context.getResources();
-            CONFLICT_COLOR = res.getColor(R.color.month_dna_conflict_time_color);
+            CONFLICT_COLOR = ContextCompat.getColor(context, R.color.month_dna_conflict_time_color);
             WORK_DAY_START_MINUTES = res.getInteger(R.integer.work_start_minutes);
             WORK_DAY_END_MINUTES = res.getInteger(R.integer.work_end_minutes);
             WORK_DAY_END_LENGTH = DAY_IN_MINUTES - WORK_DAY_END_MINUTES;
@@ -916,8 +917,8 @@ public class Utils {
             return null;
         }
 
-        LinkedList<DNASegment> segments = new LinkedList<DNASegment>();
-        HashMap<Integer, DNAStrand> strands = new HashMap<Integer, DNAStrand>();
+        LinkedList<DNASegment> segments = new LinkedList<>();
+        HashMap<Integer, DNAStrand> strands = new HashMap<>();
         // add a black strand by default, other colors will get added in
         // the loop
         DNAStrand blackStrand = new DNAStrand();
