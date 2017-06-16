@@ -16,14 +16,18 @@
 
 package br.com.qualidata.calendar;
 
+import android.Manifest;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Looper;
 import android.provider.CalendarContract.CalendarCache;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.text.format.Time;
@@ -32,6 +36,10 @@ import android.util.Log;
 import java.util.Formatter;
 import java.util.HashSet;
 import java.util.Locale;
+
+import br.com.qualidata.calendar.db.CalendarDb;
+import br.com.qualidata.calendar.db.EventDb;
+import br.com.qualidata.calendar.model.Calendar;
 
 /**
  * A class containing utility methods related to Calendar apps.
@@ -319,36 +327,62 @@ public class CalendarUtils {
         }
     }
 
-        /**
-         * A helper method for writing a String value to the preferences
-         * asynchronously.
-         *
-         * @param key The preference to write to
-         * @param value The value to write
-         */
-        public static void setSharedPreference(SharedPreferences prefs, String key, String value) {
+    /**
+     * A helper method for writing a String value to the preferences
+     * asynchronously.
+     *
+     * @param key The preference to write to
+     * @param value The value to write
+     */
+    public static void setSharedPreference(SharedPreferences prefs, String key, String value) {
 //            SharedPreferences prefs = getSharedPreferences(context);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putString(key, value);
-            editor.apply();
-        }
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
 
-        /**
-         * A helper method for writing a boolean value to the preferences
-         * asynchronously.
-         *
-         * @param key The preference to write to
-         * @param value The value to write
-         */
-        public static void setSharedPreference(SharedPreferences prefs, String key, boolean value) {
+    /**
+     * A helper method for writing a boolean value to the preferences
+     * asynchronously.
+     *
+     * @param key The preference to write to
+     * @param value The value to write
+     */
+    public static void setSharedPreference(SharedPreferences prefs, String key, boolean value) {
 //            SharedPreferences prefs = getSharedPreferences(context, prefsName);
-            SharedPreferences.Editor editor = prefs.edit();
-            editor.putBoolean(key, value);
-            editor.apply();
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, value);
+        editor.apply();
+    }
+
+    /** Return a properly configured SharedPreferences instance */
+    public static SharedPreferences getSharedPreferences(Context context, String prefsName) {
+        return context.getSharedPreferences(prefsName, Context.MODE_PRIVATE);
+    }
+
+    public static boolean isWriteCalendarPermissionGranted(@NonNull Context context) {
+        return ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    /** Deletes all events from a calendar (and the calendar itself) */
+    public static void deleteCalendarAndEvents(@NonNull Context context, @NonNull String syncId) {
+
+        if (!isWriteCalendarPermissionGranted(context)) {
+            return;
         }
 
-        /** Return a properly configured SharedPreferences instance */
-        public static SharedPreferences getSharedPreferences(Context context, String prefsName) {
-            return context.getSharedPreferences(prefsName, Context.MODE_PRIVATE);
+        CalendarDb calendarDb = CalendarDb.with(context);
+        Calendar calendar = null;
+
+        if (calendarDb.hasCalendarForSyncId(syncId)) {
+            calendar = calendarDb.getCalendarForId(syncId);
         }
+
+        if (calendar == null) {
+            return;
+        }
+
+        EventDb eventDb = EventDb.with(context);
+        eventDb.deleteAllEventsForCalendarId(calendar.getId());
+    }
 }

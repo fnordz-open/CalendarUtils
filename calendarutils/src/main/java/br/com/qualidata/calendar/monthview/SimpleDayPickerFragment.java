@@ -347,8 +347,7 @@ public class SimpleDayPickerFragment extends ListFragment implements OnScrollLis
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.month_by_week,
-                container, false);
+        View v = inflater.inflate(R.layout.month_by_week, container, false);
         mDayNamesHeader = (ViewGroup) v.findViewById(R.id.day_names);
         return v;
     }

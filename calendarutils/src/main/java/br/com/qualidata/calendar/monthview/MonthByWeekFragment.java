@@ -120,7 +120,7 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
         }
         mOnMonthChangedCallback = (OnMonthChangedCallback)activity;
 
-        if (!(activity instanceof  OnDaySelectedCallback)) {
+        if (!(activity instanceof OnDaySelectedCallback)) {
             throw new ClassCastException("activity must implement OnDaySelectedCallback");
         }
         onDaySelectedCallback = (OnDaySelectedCallback) activity;
@@ -401,13 +401,5 @@ public class MonthByWeekFragment extends SimpleDayPickerFragment implements
         mLastLoadedJulianDay = mFirstLoadedJulianDay + (mNumWeeks + 2 * WEEKS_BUFFER) * 7;
 
         return new Pair<>(mFirstLoadedJulianDay, mLastLoadedJulianDay);
-    }
-
-    public EventLoader getEventLoader() {
-        return mEventLoader;
-    }
-
-    public boolean hasEventLoader() {
-        return mEventLoader != null;
     }
 }
